@@ -1,6 +1,7 @@
 package com.example.quanlytrungtam.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -15,7 +16,7 @@ public class Lop {
     @Column(name = "tenlop")
     private String tenLop;
 
-    @OneToMany(mappedBy = "lop")
-    @JsonIgnoreProperties(value = "lop")
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "lop")
+    @JsonManagedReference
     private Set<HocVien> hocViens;
 }

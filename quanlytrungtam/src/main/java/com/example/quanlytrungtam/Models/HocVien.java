@@ -1,5 +1,6 @@
 package com.example.quanlytrungtam.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -15,6 +16,9 @@ public class HocVien {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "hocvienid")
     private int hocVienId;
+
+    @Column(name = "lopid",insertable=false, updatable=false)
+    private int lopId;
     @Column(name = "hoten")
     @Size(min = 6, max = 50, message = "Họ và tên từ 6-50 kí tự")
     @NotNull(message = "Họ và tên không được để trống")
@@ -40,10 +44,34 @@ public class HocVien {
     @Column(name = "ngaydangky")
     private LocalDate ngayDangKy;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name = "lopid", foreignKey = @ForeignKey(name = "fk_hocvien_lop"))
-    @JsonIgnoreProperties(value = "hocViens")
+    @JsonBackReference
     private Lop lop;
+
+    public int getLopId() {
+        return lopId;
+    }
+
+    public void setLopId(int lopId) {
+        this.lopId = lopId;
+    }
+
+    public LocalDate getNgayDangKy() {
+        return ngayDangKy;
+    }
+
+    public void setNgayDangKy(LocalDate ngayDangKy) {
+        this.ngayDangKy = ngayDangKy;
+    }
+
+    public Lop getLop() {
+        return lop;
+    }
+
+    public void setLop(Lop lop) {
+        this.lop = lop;
+    }
 
     public int getHocVienId() {
         return hocVienId;
