@@ -2,6 +2,7 @@ package com.example.quanlymonan.Models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "congthuc")
@@ -15,9 +16,12 @@ public class CongThuc {
     @Column(name = "monanid", insertable=false, updatable=false)
     private int monAnId;
 
+
     @Column(name = "soluong")
+    @NotNull
     private int soLuong;
     @Column(name = "donvitinh")
+    @NotNull
     private String donViTinh;
 
     @ManyToOne()

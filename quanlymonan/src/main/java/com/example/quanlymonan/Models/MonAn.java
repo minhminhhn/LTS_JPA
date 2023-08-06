@@ -3,6 +3,7 @@ package com.example.quanlymonan.Models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
@@ -16,6 +17,7 @@ public class MonAn {
     @Column(name = "loaimonanid", insertable=false, updatable=false)
     private int loaiMonAnId;
     @Column(name = "tenmon")
+    @NotNull
     private String tenMon;
     @Column(name = "ghichu")
     private String ghiChu;

@@ -2,6 +2,7 @@ package com.example.quanlymonan.Models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
@@ -13,6 +14,7 @@ public class LoaiMonAn {
     @Column(name = "loaimonanid")
     private int loaiMonAnId;
     @Column(name = "tenloai")
+    @NotNull
     private String tenLoai;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "loaiMonAn")

@@ -12,4 +12,6 @@ import java.util.List;
 @Repository
 public interface NguyenLieuRepo extends JpaRepository<NguyenLieu, Integer> {
 
+    @Query("select n from NguyenLieu n where n.tenNguyenLieu = :tenNguyenLieu")
+    public NguyenLieu getNguyenLieu(@Param("tenNguyenLieu") String tenNguyenLieu);
 }
