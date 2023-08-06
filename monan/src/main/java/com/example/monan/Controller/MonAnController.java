@@ -2,15 +2,14 @@ package com.example.monan.Controller;
 
 import com.example.monan.Models.LoaiMonAn;
 import com.example.monan.Models.MonAn;
+import com.example.monan.Models.NguyenLieu;
 import com.example.monan.Repository.LoaiMonAnRepo;
 import com.example.monan.Repository.MonAnRepo;
+import com.example.monan.Repository.NguyenLieuRepo;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +20,8 @@ public class MonAnController {
     private MonAnRepo monAnRepo;
     @Autowired
     private LoaiMonAnRepo loaiMonAnRepo;
+    @Autowired
+    private NguyenLieuRepo nguyenLieuRepo;
 
     @RequestMapping(value = "monan/addmonan", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public MonAn addMonAn(@RequestBody String monAn) {
@@ -33,6 +34,18 @@ public class MonAnController {
         monAn1.setLoaiMonAn(loaiMonAn);
         monAnRepo.save(monAn1);
         return monAn1;
+    }
+
+    @RequestMapping(value = "timkiem/monan", method = RequestMethod.GET)
+    public List<MonAn> timKiemMonAn(@RequestParam String tenMon) {
+        List<MonAn> monAns = monAnRepo.findByTenMon(tenMon);
+        return monAns;
+    }
+
+    @RequestMapping(value = "timkiem/nguyenlieu", method = RequestMethod.GET)
+    public List<MonAn> timKiemMonAnNL(@RequestParam String tenNguyenLieu) {
+        List<MonAn> monAns = nguyenLieuRepo.findByTenNguyenLieu(tenNguyenLieu);
+        return monAns;
     }
 
     @RequestMapping(value = "monan/getallmonan", method = RequestMethod.GET)
