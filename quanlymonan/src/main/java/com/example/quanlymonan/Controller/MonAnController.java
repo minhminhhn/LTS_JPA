@@ -27,7 +27,7 @@ public class MonAnController {
     private LoaiMonAnRepo loaiMonAnRepo;
 
     @RequestMapping(value = "hienthi")
-    public MonAn hienThiDanhSach() {
+    public void hienThiDanhSach() {
         List<MonAn> monAns = monAnRepo.findAll();
         for (MonAn monAn : monAns) {
             System.out.println("Món ăn " + monAn.getTenMon() + ":");
@@ -39,7 +39,6 @@ public class MonAnController {
             }
             System.out.println();
         }
-        return monAnRepo.findById(22).orElse(null);
     }
 
     @RequestMapping(value = "timkiem/nguyenlieu", method = RequestMethod.GET)
