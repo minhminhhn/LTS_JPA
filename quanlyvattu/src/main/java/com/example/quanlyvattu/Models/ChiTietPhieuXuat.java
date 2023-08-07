@@ -26,4 +26,52 @@ public class ChiTietPhieuXuat {
     @JoinColumn(name = "phieuxuatid", foreignKey = @ForeignKey(name = "fk_chitietphieuxuat_phieuxuat"))
     @JsonBackReference
     private PhieuXuat phieuXuat;
+
+    public int getChiTietPhieuXuatId() {
+        return chiTietPhieuXuatId;
+    }
+
+    public void setChiTietPhieuXuatId(int chiTietPhieuXuatId) {
+        this.chiTietPhieuXuatId = chiTietPhieuXuatId;
+    }
+
+    public int getVatTuId() {
+        return vatTuId;
+    }
+
+    public void setVatTuId(int vatTuId) {
+        this.vatTuId = vatTuId;
+    }
+
+    public int getPhieuXuatId() {
+        return phieuXuatId;
+    }
+
+    public void setPhieuXuatId(int phieuXuatId) {
+        this.phieuXuatId = phieuXuatId;
+    }
+
+    public int getSoLuongXuat() {
+        return soLuongXuat;
+    }
+
+    public void setSoLuongXuat(int soLuongXuat) {
+        this.soLuongXuat = soLuongXuat;
+    }
+
+    public VatTu getVatTu() {
+        return vatTu;
+    }
+
+    public void setVatTu(VatTu vatTu) {
+        this.vatTu = vatTu;
+    }
+
+    public PhieuXuat getPhieuXuat() {
+        return phieuXuat;
+    }
+
+    public void setPhieuXuat(PhieuXuat phieuXuat) {
+        this.phieuXuat = phieuXuat;
+    }
 }

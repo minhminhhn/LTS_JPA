@@ -23,4 +23,44 @@ public class PhieuXuat {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "phieuXuat")
     @JsonManagedReference
     private Set<ChiTietPhieuXuat> chiTietPhieuXuats;
+
+    public int getPhieuXuatId() {
+        return phieuXuatId;
+    }
+
+    public void setPhieuXuatId(int phieuXuatId) {
+        this.phieuXuatId = phieuXuatId;
+    }
+
+    public String getMaPhieu() {
+        return maPhieu;
+    }
+
+    public void setMaPhieu(String maPhieu) {
+        this.maPhieu = maPhieu;
+    }
+
+    public String getTieuDe() {
+        return tieuDe;
+    }
+
+    public void setTieuDe(String tieuDe) {
+        this.tieuDe = tieuDe;
+    }
+
+    public LocalDate getNgayXuat() {
+        return ngayXuat;
+    }
+
+    public void setNgayXuat(LocalDate ngayXuat) {
+        this.ngayXuat = ngayXuat;
+    }
+
+    public Set<ChiTietPhieuXuat> getChiTietPhieuXuats() {
+        return chiTietPhieuXuats;
+    }
+
+    public void setChiTietPhieuXuats(Set<ChiTietPhieuXuat> chiTietPhieuXuats) {
+        this.chiTietPhieuXuats = chiTietPhieuXuats;
+    }
 }
