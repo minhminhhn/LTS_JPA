@@ -1,7 +1,9 @@
 package com.example.phieuthu.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 import java.util.Set;
 
@@ -13,6 +15,7 @@ public class LoaiNguyenLieu {
     @Column(name = "loainguyenlieuid")
     private int loaiNguyenLieuId;
     @Column(name = "tenloai")
+    @Size(max = 20)
     private String tenLoai;
     @Column(name = "mota")
     private String moTa;
