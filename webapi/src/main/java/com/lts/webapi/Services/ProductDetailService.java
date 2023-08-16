@@ -22,7 +22,7 @@ public class ProductDetailService implements IProductDetailService {
 
 
     @Override
-    public Response<List<ProductDetails>> getAllProductDetail() {
+    public ResponseEntity<Response<List<ProductDetails>>> getAllProductDetail() {
         List<ProductDetails> productDetails = productDetailsRepo.findAll();
 
         List<ProductDetails> result = new ArrayList<>();
@@ -32,39 +32,48 @@ public class ProductDetailService implements IProductDetailService {
             }
         });
 
-        Response<List<ProductDetails>> response = new Response<>();
-        response.setData(result);
-        response.setStatus(2);
-        response.setMessage("Lấy danh sách sản phẩm thành công.");
+        Response<List<ProductDetails>> response = new Response<>(200, null,
+                "Lấy danh sách sản phẩm thành công.", result);
 
-        return response;
+        return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<String> purchaseProduct(List<PurchaseRequest> purchaseRequests) {
+    public ResponseEntity<Response> purchaseProduct(List<PurchaseRequest> purchaseRequests) {
         for (PurchaseRequest request : purchaseRequests) {
             int productDetailId = request.getProductDetailId();
             int quantity = request.getQuantity();
 
             ProductDetails productDetails = productDetailsRepo.findById(productDetailId).orElse(null);
             if (productDetails == null) {
-                return ResponseEntity.badRequest().body("Sản phẩm " + request.getProductDetailId() + " không tồn tại");
+                Response<List<ProductDetails>> response = new Response<>(404,
+                        "Sản phẩm " + request.getProductDetailId() + " không tồn tại", null);
+                return ResponseEntity.badRequest().body(response);
             }
             if (productDetails.getQuantity() < quantity) {
-                return ResponseEntity.badRequest().body("Sản phẩm " + request.getProductDetailId() + " không đủ số lượng");
+                Response<List<ProductDetails>> response = new Response<>(404,
+                        "Sản phẩm " + request.getProductDetailId() + " không đủ số lượng",null
+                        );
+                return ResponseEntity.badRequest().body(response);
             }
             if (productDetails.getQuantity() == 0) {
-                return ResponseEntity.badRequest().body("Sản phẩm " + request.getProductDetailId() + " hết hàng");
+                Response<List<ProductDetails>> response = new Response<>(404,
+                        "Sản phẩm " + request.getProductDetailId() + " hết hàng",null
+                );
+                return ResponseEntity.badRequest().body(response);
             }
             while (productDetails != null) {
                 productDetails.setQuantity(productDetails.getQuantity() - request.getQuantity());
                 productDetailsRepo.save(productDetails);
-                System.out.println("get: " + productDetails.toString());
                 productDetails = productDetails.getParent();
             }
 
         }
-        return ResponseEntity.ok("Mua sản phẩm thành công");
+
+        Response response = new Response<>(200, null,
+                "Mua sản phẩm thành công");
+
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -98,13 +107,19 @@ public class ProductDetailService implements IProductDetailService {
     }
 
     @Override
-    public ResponseEntity<String> updateQuantity(ProductDetails productDetailNew) {
+    public ResponseEntity<Response> updateQuantity(ProductDetails productDetailNew) {
         ProductDetails productDetails = productDetailsRepo.findById(productDetailNew.getProductDetailId()).orElse(null);
         if (productDetails == null) {
-            return ResponseEntity.badRequest().body("Sản phẩm không tồn tại.");
+            Response<List<ProductDetails>> response = new Response<>(404,
+                    "Sản phẩm không tồn tại.",null
+            );
+            return ResponseEntity.badRequest().body(response);
         }
         if (!productDetails.getChildList().isEmpty()) {
-            return ResponseEntity.badRequest().body("Không thể cập nhật số lượng.");
+            Response<List<ProductDetails>> response = new Response<>(404,
+                    "Không thể cập nhật số lượng.",null
+            );
+            return ResponseEntity.badRequest().body(response);
         }
         int oldQuantity = productDetails.getQuantity();
         productDetails.setQuantity(productDetailNew.getQuantity());
@@ -114,10 +129,12 @@ public class ProductDetailService implements IProductDetailService {
             productDetails.setQuantity(productDetails.getQuantity() - oldQuantity + productDetailNew.getQuantity());
             productDetailsRepo.save(productDetails);
             productDetails = productDetails.getParent();
-
         }
 
-        return ResponseEntity.ok("Chập nhật số lượng thành công");
+        Response<List<ProductDetails>> response = new Response<>(200,
+                null,"Chập nhật số lượng thành công"
+        );
+        return ResponseEntity.ok(response);
     }
 
 }

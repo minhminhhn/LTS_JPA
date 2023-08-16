@@ -27,12 +27,12 @@ public class ProductDetailController {
 
 
     @RequestMapping(value = "getall", method = RequestMethod.GET)
-    public Response<List<ProductDetails>> getAll() {
+    public ResponseEntity<Response<List<ProductDetails>>> getAll() {
         return productDetailService.getAllProductDetail();
     }
 
     @RequestMapping(value = "purchase")
-    public ResponseEntity<String> purchaseProducts(@RequestBody String purchase) {
+    public ResponseEntity<Response> purchaseProducts(@RequestBody String purchase) {
         Gson gson = new Gson();
         java.lang.reflect.Type listType = new TypeToken<List<PurchaseRequest>>(){}.getType();
         List<PurchaseRequest> requests = gson.fromJson(purchase, listType);
@@ -45,7 +45,7 @@ public class ProductDetailController {
     }
 
     @RequestMapping(value = "updatequantity", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> updateQuantity(@RequestBody String productDetail){
+    public ResponseEntity<Response> updateQuantity(@RequestBody String productDetail){
         Gson gson = new Gson();
         ProductDetails productDetails = gson.fromJson(productDetail, ProductDetails.class);
         return productDetailService.updateQuantity(productDetails);
