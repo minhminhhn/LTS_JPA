@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface IProductDetailService {
-    public Response<List<ProductDetails>> getAllProductDetail();
-    public ResponseEntity<String> purchaseProduct(List<PurchaseRequest> purchaseRequests);
+    public ResponseEntity<Response<List<ProductDetails>>> getAllProductDetail();
+    public ResponseEntity<Response> purchaseProduct(List<PurchaseRequest> purchaseRequests);
     public ResponseEntity<String> updateQuantity0(int productDetailId);
-    public ResponseEntity<String> updateQuantity(ProductDetails productDetail);
+    public ResponseEntity<Response> updateQuantity(ProductDetails productDetail);
 
 }
