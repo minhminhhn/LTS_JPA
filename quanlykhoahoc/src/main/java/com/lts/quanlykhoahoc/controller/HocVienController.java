@@ -1,9 +1,9 @@
 package com.lts.quanlykhoahoc.controller;
 
 import com.google.gson.*;
-import com.lts.quanlykhoahoc.models.dangkyhoc.TinhTrangHoc;
+import com.lts.quanlykhoahoc.models.hocvien.HocVien;
 import com.lts.quanlykhoahoc.models.response.ApiResponse;
-import com.lts.quanlykhoahoc.services.TinhTrangHocService;
+import com.lts.quanlykhoahoc.services.HocVienService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +16,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "api/tinhtranghoc")
-public class TinhTrangHocController {
-
+@RequestMapping("api/hocvien")
+public class HocVienController {
     @Autowired
-    private TinhTrangHocService tinhTrangHocService;
-
+    private HocVienService hocVienService;
     @RequestMapping(value = "addnew", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> addNew(@RequestBody String request) {
         Gson gson = new GsonBuilder()
@@ -39,8 +37,8 @@ public class TinhTrangHocController {
                 })
                 .create();
 
-        TinhTrangHoc tinhTrangHoc = gson.fromJson(request, TinhTrangHoc.class);
-        return tinhTrangHocService.addNew(tinhTrangHoc);
+        HocVien hocVien = gson.fromJson(request, HocVien.class);
+        return hocVienService.addNew(hocVien);
     }
 
     @RequestMapping(value = "update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,17 +58,17 @@ public class TinhTrangHocController {
                 })
                 .create();
 
-        TinhTrangHoc tinhTrangHoc = gson.fromJson(request, TinhTrangHoc.class);
-        return tinhTrangHocService.remake(tinhTrangHoc);
+        HocVien hocVien = gson.fromJson(request, HocVien.class);
+        return hocVienService.remake(hocVien);
     }
 
     @RequestMapping(value = "remove", method = RequestMethod.DELETE)
-    public ResponseEntity<ApiResponse> remove(@RequestParam int tinhTrangHocId) {
-        return tinhTrangHocService.remove(tinhTrangHocId);
+    public ResponseEntity<ApiResponse> remove(@RequestParam int hocVienId) {
+        return hocVienService.remove(hocVienId);
     }
 
     @RequestMapping(value = "getall", method = RequestMethod.GET)
-    public ResponseEntity<ApiResponse<List<TinhTrangHoc>>> getAll() {
-        return tinhTrangHocService.getAll();
+    public ResponseEntity<ApiResponse<List<HocVien>>> getAll() {
+        return hocVienService.getAll();
     }
 }
