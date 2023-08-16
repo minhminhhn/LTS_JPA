@@ -114,6 +114,7 @@ public class DangKyHocService implements IDangKyHocService{
         dangKyHocNew.setHocVien((hocVien));
         dangKyHocNew.setKhoaHoc((khoaHoc));
         dangKyHocNew.setTinhTrangHoc(tinhTrangHoc);
+        dangKyHocNew.setTaiKhoan(taiKhoan);
         if(dangKyHocNew.getNgayDangKy() == null){
             dangKyHocNew.setNgayDangKy(LocalDate.now());
         }

@@ -45,7 +45,7 @@ public class HocVienService implements IHocVienService{
         }
         hocVienRepo.save(hocVienNew);
         ApiResponse response = new ApiResponse(LocalDateTime.now().toString(),
-                200, null, "Thêm học viên thành công.");
+                200, null, "Sửa học viên thành công.");
         return ResponseEntity.ok(response);
     }
 

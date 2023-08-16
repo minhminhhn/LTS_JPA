@@ -45,8 +45,8 @@ public class KhoaHocController {
         return khoaHocService.addNew(khoaHoc);
     }
 
-    @RequestMapping(value = "sualoaikhoahoc", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> suaLoaiKhoaHoc(@RequestBody String request) {
+    @RequestMapping(value = "remake", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse> suaKhoaHoc(@RequestBody String request) {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new JsonDeserializer<LocalDate>() {
                     @Override

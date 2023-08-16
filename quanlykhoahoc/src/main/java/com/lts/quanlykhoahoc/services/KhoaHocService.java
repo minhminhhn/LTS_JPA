@@ -61,6 +61,13 @@ public class KhoaHocService implements IKhoaHocService {
                     404, "Khóa học không tồn tại", null);
             return ResponseEntity.status(404).body(response);
         }
+        LoaiKhoaHoc loaiKhoaHoc = loaiKhoaHocRepo.findById(khoaHocNew.getLoaiKhoaHocId()).orElse(null);
+        if (loaiKhoaHoc == null) {
+            ApiResponse response = new ApiResponse(LocalDateTime.now().toString(),
+                    404, "Loại khóa học không tồn tại", null);
+            return ResponseEntity.status(404).body(response);
+        }
+        khoaHocNew.setLoaiKhoaHoc(loaiKhoaHoc);
         khoaHocRepo.save(khoaHocNew);
         ApiResponse response = new ApiResponse(LocalDateTime.now().toString(),
                 200, null, "Thêm khóa học thành công.");

@@ -18,4 +18,28 @@ public class LoaiBaiViet {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "loaiBaiViet")
     @JsonManagedReference
     private Set<ChuDe> chuDes;
+
+    public int getLoaiBaiVietId() {
+        return loaiBaiVietId;
+    }
+
+    public void setLoaiBaiVietId(int loaiBaiVietId) {
+        this.loaiBaiVietId = loaiBaiVietId;
+    }
+
+    public String getTenLoai() {
+        return tenLoai;
+    }
+
+    public void setTenLoai(String tenLoai) {
+        this.tenLoai = tenLoai;
+    }
+
+    public Set<ChuDe> getChuDes() {
+        return chuDes;
+    }
+
+    public void setChuDes(Set<ChuDe> chuDes) {
+        this.chuDes = chuDes;
+    }
 }
