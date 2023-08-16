@@ -71,19 +71,15 @@ public class KhoaHocController {
     }
 
     @RequestMapping(value = "getall", method = RequestMethod.GET)
-    private ResponseEntity<ApiResponse<List<KhoaHoc>>> getAll(){
-        return khoaHocService.getAll();
+    private ResponseEntity<ApiResponse<Map<String, Object>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return khoaHocService.getAll(page, size);
     }
 
     @RequestMapping(value = "findByName", method = RequestMethod.GET)
     private ResponseEntity<ApiResponse<KhoaHoc>> findByName(@RequestParam String tenKhoaHoc){
         return khoaHocService.findByName(tenKhoaHoc);
-    }
-    @RequestMapping(value = "khoahocpage", method = RequestMethod.GET)
-    private Map<String, Object> getPagedData(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ){
-        return khoaHocService.getPagedData(page,size);
     }
 }

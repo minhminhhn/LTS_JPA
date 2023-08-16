@@ -68,10 +68,17 @@ public class KhoaHocService implements IKhoaHocService {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<List<KhoaHoc>>> getAll() {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getAll(int page, int size) {
         List<KhoaHoc> khoaHocs = khoaHocRepo.findAll();
-        ApiResponse<List<KhoaHoc>> response = new ApiResponse(LocalDateTime.now().toString(),
-                200, null, "Lấy danh sách khóa học thành công.", khoaHocs);
+        Pageable pageRequest = PageRequest.of(page, size);
+        Page<KhoaHoc> pagedData = khoaHocRepo.findAll(pageRequest);
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("data", pagedData.getContent());
+        responseData.put("currentPage", pagedData.getNumber());
+        responseData.put("totalItems", pagedData.getTotalElements());
+        responseData.put("totalPages", pagedData.getTotalPages());
+        ApiResponse<Map<String, Object>> response = new ApiResponse(LocalDateTime.now().toString(),
+                200, null, "Lấy danh sách khóa học thành công.", responseData);
         return ResponseEntity.ok(response);
     }
 
@@ -88,16 +95,11 @@ public class KhoaHocService implements IKhoaHocService {
         return ResponseEntity.ok(response);
     }
 
+
     @Override
-    public Map<String, Object> getPagedData(int page, int size) {
-        Pageable pageRequest = PageRequest.of(page, size);
-        Page<KhoaHoc> pagedData = khoaHocRepo.findAll(pageRequest);
-        Map<String, Object> response = new HashMap<>();
-        response.put("data", pagedData.getContent());
-        response.put("currentPage", pagedData.getNumber());
-        response.put("totalItems", pagedData.getTotalElements());
-        response.put("totalPages", pagedData.getTotalPages());
-        return response;
+    public void updateSoLuong(KhoaHoc khoaHoc) {
+        khoaHoc.setSoHocVien(khoaHoc.getSoHocVien()+1);
+        khoaHocRepo.save(khoaHoc);
     }
 
     public void dangKyHocVien(int khoaHocId) {

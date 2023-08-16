@@ -12,7 +12,7 @@ public interface IKhoaHocService {
     public ResponseEntity<ApiResponse> addNew(KhoaHoc khoaHoc);
     public ResponseEntity<ApiResponse> suaKhoaHoc(KhoaHoc khoaHocNew);
     public ResponseEntity<ApiResponse> xoaKhoaHoc(int khoaHocId);
-    public ResponseEntity<ApiResponse<List<KhoaHoc>>> getAll();
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getAll(int page, int size);
     public ResponseEntity<ApiResponse<KhoaHoc>> findByName(String tenKhoaHoc);
-    public Map<String, Object> getPagedData(int page, int size);
+    public void updateSoLuong(KhoaHoc khoaHoc);
 }
