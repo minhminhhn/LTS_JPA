@@ -1,11 +1,15 @@
 package store.polyfood.thuctap.models;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
-    @Table(name = "Decentralization")
+@Table(name = "Decentralization")
 public class Decentralization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +24,18 @@ public class Decentralization {
 
     @Column
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "decentralization", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Account> accounts;
+
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
+    }
 
     public int getDecentralizationId() {
         return decentralizationId;

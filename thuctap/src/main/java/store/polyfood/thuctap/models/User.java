@@ -1,8 +1,10 @@
 package store.polyfood.thuctap.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -18,12 +20,60 @@ public class User {
     private String email;
     @Column
     private String address;
-    @Column
+    @Column(name = "account_id",updatable = false, insertable = false)
     private int accountId;
     @Column
     private LocalDateTime createdAt;
     @Column
     private LocalDateTime updatedAt;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name ="account_id")
+    private Account account;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonManagedReference
+    private Set<Orders> listOrders;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonManagedReference
+    private Set<Carts> carts;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonManagedReference
+    private Set<ProductReview> productReviews;
+
+    public Set<ProductReview> getProductReviews() {
+        return productReviews;
+    }
+
+    public void setProductReviews(Set<ProductReview> productReviews) {
+        this.productReviews = productReviews;
+    }
+
+    public Set<Carts> getCarts() {
+        return carts;
+    }
+
+    public void setCarts(Set<Carts> carts) {
+        this.carts = carts;
+    }
+
+    public Set<Orders> getListOrders() {
+        return listOrders;
+    }
+
+    public void setListOrders(Set<Orders> listOrders) {
+        this.listOrders = listOrders;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     public int getUserId() {
         return userId;

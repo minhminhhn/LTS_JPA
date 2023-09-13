@@ -1,8 +1,10 @@
 package store.polyfood.thuctap.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 public class ProductType {
@@ -18,6 +20,18 @@ public class ProductType {
     private LocalDateTime createdAt;
     @Column
     private LocalDateTime updatedAt;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productType")
+    @JsonManagedReference
+    private Set<Product> products;
+
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
+    }
 
     public int getProductTypeId() {
         return productTypeId;

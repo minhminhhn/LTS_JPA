@@ -1,18 +1,19 @@
 package store.polyfood.thuctap.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-public class ProductView {
+public class ProductReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private int productViewId;
-    @Column
+    private int productReviewId;
+    @Column(name = "product_id", updatable = false, insertable = false)
     private int productId;
-    @Column
+    @Column(name = "user_id", updatable = false, insertable = false)
     private int userId;
     @Column
     private String contentRated;
@@ -28,12 +29,46 @@ public class ProductView {
     @Column
     private LocalDateTime updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    @JsonBackReference
+    private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public int getProductReviewId() {
+        return productReviewId;
+    }
+
+    public void setProductReviewId(int productReviewId) {
+        this.productReviewId = productReviewId;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
     public int getProductViewId() {
-        return productViewId;
+        return productReviewId;
     }
 
     public void setProductViewId(int productViewId) {
-        this.productViewId = productViewId;
+        this.productReviewId = productViewId;
     }
 
     public int getProductId() {

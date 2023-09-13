@@ -6,29 +6,40 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class ProductImage {
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private int productImageId;
-    @Column
-    private String title;
-    @Column
-    private String imageProduct;
+    private int cartItemId;
     @Column(name = "product_id", updatable = false, insertable = false)
     private int productId;
+    @Column(name = "cart_id", updatable = false, insertable = false)
+    private int cartId;
     @Column
-    private int status;
-
+    private int quantity;
     @Column
     private LocalDateTime createdAt;
     @Column
     private LocalDateTime updatedAt;
 
     @ManyToOne
+    @JoinColumn(name = "cart_id")
+    @JsonBackReference
+    private Carts carts;
+
+
+    @ManyToOne
     @JoinColumn(name = "product_id")
     @JsonBackReference
     private Product product;
+
+    public Carts getCarts() {
+        return carts;
+    }
+
+    public void setCarts(Carts carts) {
+        this.carts = carts;
+    }
 
     public Product getProduct() {
         return product;
@@ -38,28 +49,12 @@ public class ProductImage {
         this.product = product;
     }
 
-    public int getProductImageId() {
-        return productImageId;
+    public int getCartItemId() {
+        return cartItemId;
     }
 
-    public void setProductImageId(int productImageId) {
-        this.productImageId = productImageId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getImageProduct() {
-        return imageProduct;
-    }
-
-    public void setImageProduct(String imageProduct) {
-        this.imageProduct = imageProduct;
+    public void setCartItemId(int cartItemId) {
+        this.cartItemId = cartItemId;
     }
 
     public int getProductId() {
@@ -70,12 +65,20 @@ public class ProductImage {
         this.productId = productId;
     }
 
-    public int getStatus() {
-        return status;
+    public int getCartId() {
+        return cartId;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public LocalDateTime getCreatedAt() {

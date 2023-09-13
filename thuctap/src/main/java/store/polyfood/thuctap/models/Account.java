@@ -1,5 +1,6 @@
 package store.polyfood.thuctap.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public class Account {
     private String password;
     @Column
     private int status;
-    @Column
+    @Column(name = "decentralization_id", updatable = false, insertable = false)
     private int decentralizationId;
     @Column
     private String resetPasswordToken;
@@ -30,6 +31,31 @@ public class Account {
     @Column
     private LocalDateTime updatedAt;
 
+    @OneToOne(mappedBy = "account")
+    private User user;
+
+
+    @ManyToOne
+    @JoinColumn(name = "decentralization_id")
+    @JsonBackReference
+    private Decentralization decentralization;
+
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Decentralization getDecentralization() {
+        return decentralization;
+    }
+
+    public void setDecentralization(Decentralization decentralization) {
+        this.decentralization = decentralization;
+    }
 
     public int getAcountId() {
         return acountId;

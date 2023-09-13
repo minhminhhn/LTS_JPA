@@ -1,8 +1,11 @@
 package store.polyfood.thuctap.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 public class Product {
@@ -10,7 +13,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private int productId;
-    @Column
+    @Column(name = "product_type_id", updatable = false, insertable = false)
     private int productTypeId;
     @Column
     private int productName;
@@ -30,6 +33,68 @@ public class Product {
     private LocalDateTime createdAt;
     @Column
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "product_type_id")
+    @JsonBackReference
+    private ProductType productType;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @JsonManagedReference
+    private Set<ProductImage> productImages;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @JsonManagedReference
+    private Set<ProductReview> productReviews;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @JsonManagedReference
+    private Set<OrderDetail> orderDetails;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @JsonManagedReference
+    private Set<CartItem> cartItems;
+
+
+    public Set<CartItem> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(Set<CartItem> cartItems) {
+        this.cartItems = cartItems;
+    }
+
+    public Set<OrderDetail> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(Set<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
+
+    public ProductType getProductType() {
+        return productType;
+    }
+
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
+    }
+
+    public Set<ProductImage> getProductImages() {
+        return productImages;
+    }
+
+    public void setProductImages(Set<ProductImage> productImages) {
+        this.productImages = productImages;
+    }
+
+    public Set<ProductReview> getProductReviews() {
+        return productReviews;
+    }
+
+    public void setProductReviews(Set<ProductReview> productReviews) {
+        this.productReviews = productReviews;
+    }
 
     public int getProductId() {
         return productId;
