@@ -1,7 +1,9 @@
-package store.polyfood.thuctap.models;
+package store.polyfood.thuctap.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import store.polyfood.thuctap.models.entities.Product;
+import store.polyfood.thuctap.models.entities.User;
 
 import java.time.LocalDateTime;
 

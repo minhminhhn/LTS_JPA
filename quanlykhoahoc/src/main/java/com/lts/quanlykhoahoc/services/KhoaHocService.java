@@ -76,7 +76,6 @@ public class KhoaHocService implements IKhoaHocService {
 
     @Override
     public ResponseEntity<ApiResponse<Map<String, Object>>> getAll(int page, int size) {
-        List<KhoaHoc> khoaHocs = khoaHocRepo.findAll();
         Pageable pageRequest = PageRequest.of(page, size);
         Page<KhoaHoc> pagedData = khoaHocRepo.findAll(pageRequest);
         Map<String, Object> responseData = new HashMap<>();

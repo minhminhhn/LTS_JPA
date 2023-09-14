@@ -1,45 +1,35 @@
-package store.polyfood.thuctap.models;
+package store.polyfood.thuctap.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import store.polyfood.thuctap.models.entities.Product;
 
 import java.time.LocalDateTime;
 
 @Entity
-public class CartItem {
+public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private int cartItemId;
+    private int productImageId;
+    @Column
+    private String title;
+    @Column
+    private String imageProduct;
     @Column(name = "product_id", updatable = false, insertable = false)
     private int productId;
-    @Column(name = "cart_id", updatable = false, insertable = false)
-    private int cartId;
     @Column
-    private int quantity;
+    private int status;
+
     @Column
     private LocalDateTime createdAt;
     @Column
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id")
-    @JsonBackReference
-    private Carts carts;
-
-
-    @ManyToOne
     @JoinColumn(name = "product_id")
     @JsonBackReference
     private Product product;
-
-    public Carts getCarts() {
-        return carts;
-    }
-
-    public void setCarts(Carts carts) {
-        this.carts = carts;
-    }
 
     public Product getProduct() {
         return product;
@@ -49,12 +39,28 @@ public class CartItem {
         this.product = product;
     }
 
-    public int getCartItemId() {
-        return cartItemId;
+    public int getProductImageId() {
+        return productImageId;
     }
 
-    public void setCartItemId(int cartItemId) {
-        this.cartItemId = cartItemId;
+    public void setProductImageId(int productImageId) {
+        this.productImageId = productImageId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getImageProduct() {
+        return imageProduct;
+    }
+
+    public void setImageProduct(String imageProduct) {
+        this.imageProduct = imageProduct;
     }
 
     public int getProductId() {
@@ -65,20 +71,12 @@ public class CartItem {
         this.productId = productId;
     }
 
-    public int getCartId() {
-        return cartId;
+    public int getStatus() {
+        return status;
     }
 
-    public void setCartId(int cartId) {
-        this.cartId = cartId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {
