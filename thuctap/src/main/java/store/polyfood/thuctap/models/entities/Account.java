@@ -2,12 +2,22 @@ package store.polyfood.thuctap.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table
-public class Account {
+@Getter
+@Setter
+public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -31,8 +41,6 @@ public class Account {
     @Column
     private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "account")
-    private User user;
 
 
     @ManyToOne
@@ -40,100 +48,40 @@ public class Account {
     @JsonBackReference
     private Decentralization decentralization;
 
-
-    public User getUser() {
-        return user;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List< GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(this.decentralization.getAuthorityName()));
+        return authorities;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Decentralization getDecentralization() {
-        return decentralization;
-    }
-
-    public void setDecentralization(Decentralization decentralization) {
-        this.decentralization = decentralization;
-    }
-
-    public int getAcountId() {
-        return acountId;
-    }
-
-    public void setAcountId(int acountId) {
-        this.acountId = acountId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public String getUsername() {
+        return userName;
     }
 
-    public int getStatus() {
-        return status;
+    @Override
+    public boolean isAccountNonExpired() {
+        return status != 4;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    @Override
+    public boolean isAccountNonLocked() {
+        return status != 3;
     }
 
-    public int getDecentralizationId() {
-        return decentralizationId;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return status != 2;
     }
 
-    public void setDecentralizationId(int decentralizationId) {
-        this.decentralizationId = decentralizationId;
-    }
-
-    public String getResetPasswordToken() {
-        return resetPasswordToken;
-    }
-
-    public void setResetPasswordToken(String resetPasswordToken) {
-        this.resetPasswordToken = resetPasswordToken;
-    }
-
-    public LocalDateTime getResetPasswordTokenExpiry() {
-        return resetPasswordTokenExpiry;
-    }
-
-    public void setResetPasswordTokenExpiry(LocalDateTime resetPasswordTokenExpiry) {
-        this.resetPasswordTokenExpiry = resetPasswordTokenExpiry;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    @Override
+    public boolean isEnabled() {
+        return status != 1;
     }
 }

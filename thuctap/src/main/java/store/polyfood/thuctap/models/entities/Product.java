@@ -16,7 +16,7 @@ public class Product {
     @Column(name = "product_type_id", updatable = false, insertable = false)
     private int productTypeId;
     @Column
-    private int productName;
+    private String productName;
     @Column
     private double price;
     @Column
@@ -112,11 +112,11 @@ public class Product {
         this.productTypeId = productTypeId;
     }
 
-    public int getProductName() {
+    public String getProductName() {
         return productName;
     }
 
-    public void setProductName(int productName) {
+    public void setProductName(String productName) {
         this.productName = productName;
     }
 

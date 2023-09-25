@@ -4,7 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import store.polyfood.thuctap.models.entities.Account;
 import store.polyfood.thuctap.models.entities.Decentralization;
@@ -13,30 +20,44 @@ import store.polyfood.thuctap.repositories.AccountRepo;
 import store.polyfood.thuctap.repositories.DecentralizationRepo;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
-public class AccountService implements IAccountService{
+public class AccountService implements IAccountService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private AccountRepo accountRepo;
 
     @Autowired
     private DecentralizationRepo decentralizationRepo;
+
     @Override
-    public ResponseEntity<Response> createNew(Account request) {
+    public Response createNew(Account request) {
+        Account account = accountRepo.findByUserName(request.getUsername());
+        if(account != null) {
+                return new Response<>(LocalDateTime.now().toString(),
+                        409, "Username already exists", null);
+        }
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
+        request.setDecentralizationId(2);
         Decentralization decentralization = decentralizationRepo.findById(request.getDecentralizationId()).orElse(null);
         if (decentralization == null) {
-            return  ResponseEntity.ok(new Response<>(LocalDateTime.now().toString(),
-                    404, "Decentralization not found", null));
+            return new Response<>(LocalDateTime.now().toString(),
+                    404, "Decentralization not found", null);
         }
+        request.setDecentralization(decentralization);
         request.setCreatedAt(LocalDateTime.now());
         accountRepo.save(request);
-        return ResponseEntity.ok(new Response<>(LocalDateTime.now().toString(), 200, null ,"Success"));
+        return new Response<>(LocalDateTime.now().toString(), HttpStatus.CREATED.value(), null, "Success");
     }
 
     @Override
-    public ResponseEntity<Response<Map<String, Object>>> getAll(int page, int pageSize) {
+    public Response<Map<String, Object>> getAll(int page, int pageSize) {
         Pageable pageRequest = PageRequest.of(page, pageSize);
         Page<Account> pagedData = accountRepo.findAll(pageRequest);
         Map<String, Object> responseData = new HashMap<>();
@@ -44,38 +65,74 @@ public class AccountService implements IAccountService{
         responseData.put("currentPage", pagedData.getNumber());
         responseData.put("totalItems", pagedData.getTotalElements());
         responseData.put("totalPages", pagedData.getTotalPages());
-        return ResponseEntity.ok(new Response<>(LocalDateTime.now().toString(),
-                200, null, "Get all account success", responseData));
+        return new Response<>(LocalDateTime.now().toString(),
+                200, null, "Get all account success", responseData);
     }
 
     @Override
-    public ResponseEntity<Response> update(Account request) {
-        Account account = accountRepo.findById(request.getDecentralizationId()).orElse(null);
+    public Response update(Account request) {
+        Account account = accountRepo.findById(request.getAcountId()).orElse(null);
         if (account == null) {
-            return  ResponseEntity.ok(new Response<>(LocalDateTime.now().toString(),
-                    404, "Account not found", null));
+            return new Response<>(LocalDateTime.now().toString(),
+                    404, "Account not found", null);
         }
         Decentralization decentralization = decentralizationRepo.findById(request.getDecentralizationId()).orElse(null);
         if (decentralization == null) {
-            return  ResponseEntity.ok(new Response<>(LocalDateTime.now().toString(),
-                    404, "Decentralization not found", null));
+            return new Response<>(LocalDateTime.now().toString(),
+                    404, "Decentralization not found", null);
         }
         request.setDecentralization(decentralization);
+        request.setCreatedAt(account.getCreatedAt());
         request.setUpdatedAt(LocalDateTime.now());
         accountRepo.save(request);
-        return ResponseEntity.ok(new Response(LocalDateTime.now().toString(),
-                200, null, "Update success"));
+        return new Response(LocalDateTime.now().toString(),
+                200, null, "Update success");
     }
 
     @Override
-    public ResponseEntity<Response> delete(int id) {
+    public Response delete(int id) {
         Account account = accountRepo.findById(id).orElse(null);
         if (account == null) {
-            return  ResponseEntity.ok(new Response<>(LocalDateTime.now().toString(),
-                    404, "Account not found", null));
+            return new Response<>(LocalDateTime.now().toString(),
+                    404, "Account not found", null);
         }
         accountRepo.delete(account);
-        return ResponseEntity.ok(new Response(LocalDateTime.now().toString(),
-                200, null, "Delete success"));
+        return new Response(LocalDateTime.now().toString(),
+                200, null, "Delete success");
     }
+
+    @Override
+    public Response<Account> getById(int id) {
+        Account account = accountRepo.findById(id).orElse(null);
+        if (account == null) {
+            return new Response<>(LocalDateTime.now().toString(),
+                    404, "Account not found", null);
+        }
+        return new Response<>(LocalDateTime.now().toString(), 200,
+                null, "Success", account);
+    }
+
+    @Override
+    public Response<Map<String, Integer>> getStatus(int id) {
+        Account account = accountRepo.findById(id).orElse(null);
+        if (account == null) {
+            return new Response<>(LocalDateTime.now().toString(),
+                    404, "Account not found", null);
+        }
+        Map<String, Integer> status = new HashMap<>();
+        status.put("status", account.getStatus());
+        return new Response<>(LocalDateTime.now().toString(), 200,
+                null, "Success", status);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Account account = accountRepo.findByUserName(username);
+
+        if (account == null) {
+            throw new UsernameNotFoundException("Account not found: " + username);
+        }
+        return account;
+    }
+
 }

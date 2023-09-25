@@ -65,14 +65,6 @@ public class ProductReview {
         this.product = product;
     }
 
-    public int getProductViewId() {
-        return productReviewId;
-    }
-
-    public void setProductViewId(int productViewId) {
-        this.productReviewId = productViewId;
-    }
-
     public int getProductId() {
         return productId;
     }

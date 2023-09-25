@@ -1,28 +1,29 @@
 package store.polyfood.thuctap.controller;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import store.polyfood.thuctap.models.entities.Account;
-import store.polyfood.thuctap.models.entities.Decentralization;
+import store.polyfood.thuctap.models.entities.OrderDetail;
+import store.polyfood.thuctap.models.entities.Orders;
 import store.polyfood.thuctap.models.responobject.Response;
-import store.polyfood.thuctap.services.DecentralizationService;
+import store.polyfood.thuctap.services.OrderService;
 
-import java.lang.reflect.Type;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/api/decentralization")
-public class DecentralizationController {
+@RequestMapping(value = "api/orders")
+public class OrderController {
 
     @Autowired
-    private DecentralizationService decentralizationService;
+    private OrderService orderService;
 
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>)
@@ -33,40 +34,52 @@ public class DecentralizationController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response> create(@RequestBody String request) {
-        Decentralization decentralization = gson.fromJson(request, Decentralization.class);
-        Response response = decentralizationService.createNew(decentralization);
+        Orders orders = gson.fromJson(request, Orders.class);
+        Response response = orderService.createNew(orders);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @RequestMapping(value = "/getall", method = RequestMethod.GET)
     public ResponseEntity<Response<Map<String, Object>>> getAll(@RequestParam(defaultValue = "0") int page ,
                                                                 @RequestParam(defaultValue = "10") int pageSize) {
-        Response<Map<String, Object>> response = decentralizationService.getAll(page, pageSize);
+        Response<Map<String, Object>> response = orderService.getAll(page, pageSize);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response> update(@RequestBody String request) {
-        Decentralization decentralization = gson.fromJson(request, Decentralization.class);
-        Response response = decentralizationService.update(decentralization);
+        Orders orders = gson.fromJson(request, Orders.class);
+        Response response = orderService.update(orders);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity<Response> delete(@RequestParam int id) {
-        Response response = decentralizationService.delete(id);
+        Response response = orderService.delete(id);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @RequestMapping(value = "/getbyid", method = RequestMethod.GET)
-    public ResponseEntity<Response<Decentralization>> getById(@RequestParam int id) {
-        Response<Decentralization> response = decentralizationService.getById(id);
+    public ResponseEntity<Response<Orders>> getById(@RequestParam int id) {
+        Response<Orders> response = orderService.getById(id);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @RequestMapping(value = "/getaccount", method = RequestMethod.GET)
-    public ResponseEntity<Response<Set<Account>>> getAccount(@RequestParam int id) {
-        Response<Set<Account>> response = decentralizationService.getAccount(id);
+    @RequestMapping(value = "/updatepayment", method = RequestMethod.PUT)
+    public ResponseEntity<Response> updatePayment(@RequestParam int id,
+                                                  @RequestParam int paymentId) {
+        Response response = orderService.updatePayment(id, paymentId);
         return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @RequestMapping(value = "/getorderdetails", method = RequestMethod.GET)
+    public ResponseEntity<Response<Set<OrderDetail>>> getOrderDetails(@RequestParam int id) {
+        Response<Set<OrderDetail>> response = orderService.getOrderDetails(id);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @RequestMapping(value = "/getorders", method = RequestMethod.GET)
+    public ResponseEntity<Response<List<Object[]>>> getOrders() {
+        return ResponseEntity.status(200).body(orderService.getOrders());
     }
 }

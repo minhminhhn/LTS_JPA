@@ -27,8 +27,8 @@ public class User {
     @Column
     private LocalDateTime updatedAt;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name ="account_id")
+    @OneToOne(targetEntity = Account.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "account_id")
     private Account account;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")

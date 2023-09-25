@@ -6,4 +6,7 @@ import store.polyfood.thuctap.models.entities.User;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Integer> {
+    public User findByFullName(String fullName);
+    public User findByEmail(String email);
+    
 }

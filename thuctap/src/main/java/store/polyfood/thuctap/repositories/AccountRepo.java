@@ -6,4 +6,7 @@ import store.polyfood.thuctap.models.entities.Account;
 
 @Repository
 public interface AccountRepo extends JpaRepository<Account, Integer> {
+    Account findByUserName(String userName);
+
+    Account findByResetPasswordToken (String resetPasswordToken);
 }
