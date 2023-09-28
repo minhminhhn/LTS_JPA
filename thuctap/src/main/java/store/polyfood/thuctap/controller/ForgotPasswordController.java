@@ -42,8 +42,8 @@ public class ForgotPasswordController {
             return ResponseEntity.ok("We have sent a reset password link to your email. Please check.");
         } catch (UsernameNotFoundException ex) {
             return ResponseEntity.status(404).body(ex.getMessage());
-        } catch (UnsupportedEncodingException | MessagingException e) {
-            return ResponseEntity.status(500).body("Error while sending email");
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 

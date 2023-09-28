@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import store.polyfood.thuctap.models.entities.Account;
@@ -29,8 +30,6 @@ import java.util.Map;
 public class AccountService implements IAccountService {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private AccountRepo accountRepo;
 
     @Autowired
@@ -43,6 +42,7 @@ public class AccountService implements IAccountService {
                 return new Response<>(LocalDateTime.now().toString(),
                         409, "Username already exists", null);
         }
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         request.setDecentralizationId(2);
         Decentralization decentralization = decentralizationRepo.findById(request.getDecentralizationId()).orElse(null);

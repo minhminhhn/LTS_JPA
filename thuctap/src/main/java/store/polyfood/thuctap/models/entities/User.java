@@ -43,6 +43,18 @@ public class User {
     @JsonManagedReference
     private Set<ProductReview> productReviews;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonManagedReference
+    private Set<VoucherUser> voucherUsers;
+
+    public Set<VoucherUser> getVoucherUsers() {
+        return voucherUsers;
+    }
+
+    public void setVoucherUsers(Set<VoucherUser> voucherUsers) {
+        this.voucherUsers = voucherUsers;
+    }
+
     public Set<ProductReview> getProductReviews() {
         return productReviews;
     }

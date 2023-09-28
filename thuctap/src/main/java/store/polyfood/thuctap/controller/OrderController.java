@@ -3,15 +3,20 @@ package store.polyfood.thuctap.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 import store.polyfood.thuctap.models.entities.OrderDetail;
 import store.polyfood.thuctap.models.entities.Orders;
 import store.polyfood.thuctap.models.responobject.Response;
 import store.polyfood.thuctap.services.OrderService;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -24,6 +29,7 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
 
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>)
@@ -72,6 +78,12 @@ public class OrderController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @RequestMapping(value = "/updatestatusorder", method = RequestMethod.PUT)
+    public ResponseEntity<Response> updateStatusOrder(@RequestParam int id,
+                                                  @RequestParam int statusOrderId) {
+        Response response = orderService.updateStatus(id, statusOrderId);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
     @RequestMapping(value = "/getorderdetails", method = RequestMethod.GET)
     public ResponseEntity<Response<Set<OrderDetail>>> getOrderDetails(@RequestParam int id) {
         Response<Set<OrderDetail>> response = orderService.getOrderDetails(id);
@@ -82,4 +94,6 @@ public class OrderController {
     public ResponseEntity<Response<List<Object[]>>> getOrders() {
         return ResponseEntity.status(200).body(orderService.getOrders());
     }
+
+
 }
