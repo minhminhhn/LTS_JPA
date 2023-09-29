@@ -21,6 +21,7 @@ import store.polyfood.thuctap.services.AccountService;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
@@ -39,15 +40,36 @@ public class SecurityConfig {
 //                .formLogin().and()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/register").permitAll()
-                .requestMatchers("/api/auth/login").permitAll()
-                .requestMatchers("/forgot_password").permitAll()
-                .requestMatchers("/reset_password").permitAll()
-                .requestMatchers("/api/account/getall").hasAuthority("ADMIN")
+                .requestMatchers("/api/register",
+                        "/api/auth/login",
+                        "/forgot_password",
+                        "/reset_password",
+                        "/api/product/getall",
+                        "/api/product/getbyid",
+                        "/api/product/getfinalfrice",
+                        "/api/product/getproductimage",
+                        "/api/product/numberofview",
+                        "/api/product/relatedproducts")
+                .permitAll()
+                .requestMatchers("/api/account/getaccount").hasAnyAuthority("USER", "ADMIN")
+                .requestMatchers("/api/account/**",
+                        "/api/product/**",
+                        "/api/user/getall",
+                        "/api/user/findbyname",
+                        "/api/orders/update",
+                        "/api/orders/getall",
+                        "/api/orders/updatestatusorder",
+                        "/api/orders/update").hasAuthority("ADMIN")
+                .requestMatchers("/api/user/create",
+                        "/api/user/update",
+                        "/api/orders/getorders",
+                        "/api/orders/create",
+                        "/api/orders/getbyid").hasAuthority("USER")
                 .anyRequest().authenticated()
                 .and()
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//                .addFilterBefore(userIdAuthorizationMiddleware, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 

@@ -34,11 +34,10 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
-
             String token = jwtTokenProvider.generateToken(authentication);
             return ResponseEntity.ok(new JwtAuthenticationResponse(token));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Tài khoản mật khẩu không chính xác");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

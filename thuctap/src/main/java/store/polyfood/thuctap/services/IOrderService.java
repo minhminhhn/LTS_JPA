@@ -18,5 +18,5 @@ public interface IOrderService {
     public Response updatePayment(int orderId, int paymentId);
     public Response<Set<OrderDetail>> getOrderDetails(int orderId);
 
-    public Response<List<Object[]>> getOrders();
+    public Response<List<Orders>> getOrders();
 }

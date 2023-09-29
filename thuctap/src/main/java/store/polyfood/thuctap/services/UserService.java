@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import store.polyfood.thuctap.models.entities.*;
 import store.polyfood.thuctap.models.responobject.Response;
@@ -23,10 +25,14 @@ public class UserService implements IUserService {
     private UserRepo userRepo;
     @Autowired
     private AccountRepo accountRepo;
+    @Autowired
+    private AccountService accountService;
 
     @Override
     public Response createNew(User request) {
-        Account account = accountRepo.findById(request.getAccountId()).orElse(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =  (String) authentication.getPrincipal();
+        Account account = (Account) accountService.loadUserByUsername(username);
         if (account == null) {
             return  new Response<>(LocalDateTime.now().toString(),
                     404, "Account not found", null);
@@ -52,16 +58,15 @@ public class UserService implements IUserService {
 
     @Override
     public Response update(User request) {
-        User user = userRepo.findById(request.getUserId()).orElse(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =  (String) authentication.getPrincipal();
+        Account account = (Account) accountService.loadUserByUsername(username);
+        User user = userRepo.findByAccountId(account.getAcountId());
         if (user == null) {
             return  new Response<>(LocalDateTime.now().toString(),
                     404, "User not found", null);
         }
-        Account account = accountRepo.findById(request.getAccountId()).orElse(null);
-        if (account == null) {
-            return  new Response<>(LocalDateTime.now().toString(),
-                    404, "Account not found", null);
-        }
+        request.setUserId(user.getUserId());
         request.setAccount(account);
         request.setCreatedAt(user.getCreatedAt());
         request.setUpdatedAt(LocalDateTime.now());
@@ -71,24 +76,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Response delete(int id) {
-        User user = userRepo.findById(id).orElse(null);
-        if (user == null) {
-            return  new Response<>(LocalDateTime.now().toString(),
-                    404, "User not found", null);
-        }
-        userRepo.delete(user);
-        return new Response(LocalDateTime.now().toString(),
-                200, null, "Delete success");
-    }
-
-    @Override
-    public Response<User> getById(int id) {
-        User user = userRepo.findById(id).orElse(null);
-        if (user == null) {
-            return  new Response<>(LocalDateTime.now().toString(),
-                    404, "User not found", null);
-        }
+    public Response<User> getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =  (String) authentication.getPrincipal();
+        Account account = (Account) accountService.loadUserByUsername(username);
+        User user = userRepo.findByAccountId(account.getAcountId());
         return new Response<>(LocalDateTime.now().toString(),
                 200, null, "Success", user);
     }
@@ -133,5 +125,17 @@ public class UserService implements IUserService {
         totalPrice.put("totalPrice", price);
         return new Response<>(LocalDateTime.now().toString(),
                 200, null, "Success", totalPrice);
+    }
+
+    @Override
+    public Response<Set<VoucherUser>> getAllVouchers(int id) {
+        User user = userRepo.findById(id).orElse(null);
+        if (user == null) {
+            return  new Response<>(LocalDateTime.now().toString(),
+                    404, "User not found", null);
+        }
+        Set<VoucherUser> voucherUsers = user.getVoucherUsers();
+        return new Response<>(LocalDateTime.now().toString(),
+                200, null, "Success", voucherUsers);
     }
 }

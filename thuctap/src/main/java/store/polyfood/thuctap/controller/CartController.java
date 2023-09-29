@@ -13,6 +13,7 @@ import store.polyfood.thuctap.services.CartService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,13 +29,12 @@ public class CartController {
                             LocalDateTime.parse(jsonElement.getAsJsonPrimitive().getAsString(),
                                     DateTimeFormatter.ISO_DATE_TIME))
             .create();
-
-    @RequestMapping(value = "/create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> create(@RequestBody String request) {
-        Carts carts = gson.fromJson(request, Carts.class);
-        Response response = cartService.createNew(carts);
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
+//    @RequestMapping(value = "/create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Response> create(@RequestBody String request) {
+//        Carts carts = gson.fromJson(request, Carts.class);
+//        Response response = cartService.createNew(carts);
+//        return ResponseEntity.status(response.getStatus()).body(response);
+//    }
 
     @RequestMapping(value = "/getall", method = RequestMethod.GET)
     public ResponseEntity<Response<Map<String, Object>>> getAll(@RequestParam(defaultValue = "0") int page ,
@@ -56,9 +56,9 @@ public class CartController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @RequestMapping(value = "/getbyid", method = RequestMethod.GET)
-    public ResponseEntity<Response<Carts>> getById(@RequestParam int id) {
-        Response<Carts> response = cartService.getById(id);
+    @RequestMapping(value = "/cart", method = RequestMethod.GET)
+    public ResponseEntity<Response<Carts>> getById() {
+        Response<Carts> response = cartService.getCart();
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

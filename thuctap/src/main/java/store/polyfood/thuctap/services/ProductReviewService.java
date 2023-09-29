@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import store.polyfood.thuctap.models.entities.*;
 import store.polyfood.thuctap.models.responobject.Response;
@@ -21,6 +23,8 @@ import java.util.Map;
 public class ProductReviewService implements IProductReviewService{
 
     @Autowired
+    private AccountService accountService;
+    @Autowired
     private ProductReviewRepo productReviewRepo;
     @Autowired
     private ProductRepo productRepo;
@@ -29,7 +33,10 @@ public class ProductReviewService implements IProductReviewService{
 
     @Override
     public Response createNew(ProductReview request) {
-        User user = userRepo.findById(request.getUserId()).orElse(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =  (String) authentication.getPrincipal();
+        Account account = (Account) accountService.loadUserByUsername(username);
+        User user = userRepo.findByAccountId(account.getAcountId());
         if (user == null) {
             return  new Response<>(LocalDateTime.now().toString(),
                     404, "User not found", null);

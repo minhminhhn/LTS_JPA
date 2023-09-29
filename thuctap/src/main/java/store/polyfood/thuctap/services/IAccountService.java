@@ -12,6 +12,6 @@ public interface IAccountService extends UserDetailsService {
     public Response<Map<String, Object>> getAll(int page, int pageSize);
     public Response update(Account request);
     public Response delete(int id);
-    public Response<Account> getById(int id);
+    public Response<Account> getAccount();
     public Response<Map<String, Integer>> getStatus(int id);
 }

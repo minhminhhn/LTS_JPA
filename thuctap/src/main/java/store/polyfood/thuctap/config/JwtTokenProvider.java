@@ -20,8 +20,12 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -40,7 +44,11 @@ public class JwtTokenProvider {
     }
 
     private String createToken(Collection<? extends GrantedAuthority> authorities, String subject) throws UnsupportedEncodingException {
-        Date now = new Date();
+
+        Calendar calendar = Calendar.getInstance();
+        TimeZone gmt7TimeZone = TimeZone.getTimeZone("GMT+7");
+        calendar.setTimeZone(gmt7TimeZone);
+        Date now = calendar.getTime();
         Date expirationDate = new Date(now.getTime() + jwtExpirationMs);
         Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
 

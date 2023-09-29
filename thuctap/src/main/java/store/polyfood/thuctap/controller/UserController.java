@@ -51,15 +51,10 @@ public class UserController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<Response> delete(@RequestParam int id) {
-        Response response = userService.delete(id);
-        return  ResponseEntity.status(response.getStatus()).body(response);
-    }
 
-    @RequestMapping(value = "/getbyid", method = RequestMethod.GET)
-    public ResponseEntity<Response<User>> getById(@RequestParam int id) {
-        Response<User> response = userService.getById(id);
+    @RequestMapping(value = "/getuser", method = RequestMethod.GET)
+    public ResponseEntity<Response<User>> getById() {
+        Response<User> response = userService.getUser();
         return  ResponseEntity.status(response.getStatus()).body(response);
     }
 

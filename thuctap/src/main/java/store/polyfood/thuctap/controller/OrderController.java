@@ -59,11 +59,11 @@ public class OrderController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<Response> delete(@RequestParam int id) {
-        Response response = orderService.delete(id);
-        return ResponseEntity.status(response.getStatus()).body(response);
-    }
+//    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+//    public ResponseEntity<Response> delete(@RequestParam int id) {
+//        Response response = orderService.delete(id);
+//        return ResponseEntity.status(response.getStatus()).body(response);
+//    }
 
     @RequestMapping(value = "/getbyid", method = RequestMethod.GET)
     public ResponseEntity<Response<Orders>> getById(@RequestParam int id) {
@@ -91,7 +91,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/getorders", method = RequestMethod.GET)
-    public ResponseEntity<Response<List<Object[]>>> getOrders() {
+    public ResponseEntity<Response<List<Orders>>> getOrders() {
         return ResponseEntity.status(200).body(orderService.getOrders());
     }
 

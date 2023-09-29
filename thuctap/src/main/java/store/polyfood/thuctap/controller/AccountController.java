@@ -48,9 +48,9 @@ public class AccountController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @RequestMapping(value = "/getbyid", method = RequestMethod.GET)
-    public ResponseEntity<Response<Account>> getById(@RequestParam int id) {
-        Response<Account> response = accountService.getById(id);
+    @RequestMapping(value = "/getaccount", method = RequestMethod.GET)
+    public ResponseEntity<Response<Account>> getAccount() {
+        Response<Account> response = accountService.getAccount();
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

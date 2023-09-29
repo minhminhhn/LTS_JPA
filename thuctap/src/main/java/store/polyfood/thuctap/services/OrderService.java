@@ -9,13 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import store.polyfood.thuctap.models.entities.*;
 import store.polyfood.thuctap.models.responobject.Response;
-import store.polyfood.thuctap.repositories.OrderRepo;
-import store.polyfood.thuctap.repositories.OrderStatusRepo;
-import store.polyfood.thuctap.repositories.PaymentRepo;
-import store.polyfood.thuctap.repositories.UserRepo;
+import store.polyfood.thuctap.repositories.*;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
@@ -30,23 +29,30 @@ public class OrderService implements IOrderService {
     private OrderRepo orderRepo;
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private OrderDetailRepo orderDetailRepo;
     @Autowired
     private OrderStatusRepo orderStatusRepo;
     @Autowired
     private PaymentRepo paymentRepo;
 
+    @Autowired
+    private ProductRepo productRepo;
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private JavaMailSender mailSender;
 
     @Override
     public Response createNew(Orders request) {
-        User user = userRepo.findById(request.getUserId()).orElse(null);
-        if (user == null) {
-            return new Response<>(LocalDateTime.now().toString(),
-                    404, "User not found", null);
-        }
-        OrderStatus orderStatus = orderStatusRepo.findById(request.getOrderStatusId()).orElse(null);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =  (String) authentication.getPrincipal();
+        Account account = (Account) accountService.loadUserByUsername(username);
+        User user = userRepo.findByAccountId(account.getAcountId());
+
+        OrderStatus orderStatus = orderStatusRepo.findById(1).orElse(null);
         if (orderStatus == null) {
             return new Response<>(LocalDateTime.now().toString(),
                     404, "Order status not found", null);
@@ -61,8 +67,26 @@ public class OrderService implements IOrderService {
         request.setPayment(payment);
         request.setCreatedAt(LocalDateTime.now());
         orderRepo.save(request);
-        return new Response<>(LocalDateTime.now().toString(), 200, null, "Success");
 
+        Set<OrderDetail> orderDetails = request.getOrderDetails();
+
+        if(!orderDetails.isEmpty()) {
+            for(OrderDetail orderDetail : orderDetails) {
+                orderDetail.setOrders(request);
+                Product product = productRepo.findById(orderDetail.getProductId()).orElse(null);
+                if (product == null) {
+                    return  new Response<>(LocalDateTime.now().toString(),
+                            404, "Product not found", null);
+                }
+                orderDetail.setProduct(product);
+                orderDetail.setPriceTotal(orderDetail.getQuantity() * (product.getPrice() *
+                        (100 - product.getDiscount())/100));
+                orderDetailRepo.save(orderDetail);
+                request.setOriginalPrice(orderDetail.getPriceTotal() + request.getOriginalPrice());
+            }
+        }
+        orderRepo.save(request);
+        return new Response<>(LocalDateTime.now().toString(), 200, null, "Success");
     }
 
     @Override
@@ -124,10 +148,18 @@ public class OrderService implements IOrderService {
 
     @Override
     public Response<Orders> getById(int id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =  (String) authentication.getPrincipal();
+        Account account = (Account) accountService.loadUserByUsername(username);
+        User user = userRepo.findByAccountId(account.getAcountId());
         Orders orders = orderRepo.findById(id).orElse(null);
         if (orders == null) {
             return new Response<>(LocalDateTime.now().toString(),
                     404, "Order not found", null);
+        }
+        if(!user.getListOrders().contains(orders)) {
+            return new Response<>(LocalDateTime.now().toString(),
+                    403, "Forbidden", null);
         }
         return new Response<>(LocalDateTime.now().toString(),
                 200, null, "Success", orders);
@@ -165,8 +197,13 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Response<List<Object[]>> getOrders() {
-        return new Response<>(LocalDateTime.now().toString(),200,null, "Success", orderRepo.getOrders());
+    public Response<List<Orders>> getOrders() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =  (String) authentication.getPrincipal();
+        Account account = (Account) accountService.loadUserByUsername(username);
+        User user = userRepo.findByAccountId(account.getAcountId());
+        return new Response<>(LocalDateTime.now().toString(),200,
+                null, "Success", orderRepo.findAllByUserId(user.getUserId()));
     }
 
 

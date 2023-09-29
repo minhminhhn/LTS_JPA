@@ -6,9 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import store.polyfood.thuctap.models.entities.Account;
 import store.polyfood.thuctap.models.entities.Decentralization;
+import store.polyfood.thuctap.models.entities.User;
 import store.polyfood.thuctap.models.responobject.Response;
 import store.polyfood.thuctap.repositories.AccountRepo;
 import store.polyfood.thuctap.repositories.DecentralizationRepo;
@@ -82,6 +84,7 @@ public class AccountService implements IAccountService {
                     404, "Decentralization not found", null);
         }
         request.setDecentralization(decentralization);
+        request.setPassword(account.getPassword());
         request.setCreatedAt(account.getCreatedAt());
         request.setUpdatedAt(LocalDateTime.now());
         accountRepo.save(request);
@@ -102,8 +105,10 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public Response<Account> getById(int id) {
-        Account account = accountRepo.findById(id).orElse(null);
+    public Response<Account> getAccount() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =  (String) authentication.getPrincipal();
+        Account account = (Account) loadUserByUsername(username);
         if (account == null) {
             return new Response<>(LocalDateTime.now().toString(),
                     404, "Account not found", null);

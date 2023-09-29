@@ -6,4 +6,5 @@ import store.polyfood.thuctap.models.entities.Voucher;
 
 @Repository
 public interface VoucherRepo extends JpaRepository<Voucher, Integer> {
+    Voucher findByVoucherCode(String voucherCode);
 }

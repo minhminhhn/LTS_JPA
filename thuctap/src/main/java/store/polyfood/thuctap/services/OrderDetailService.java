@@ -46,7 +46,6 @@ public class OrderDetailService implements IOrderDetailService{
         request.setCreatedAt(LocalDateTime.now());
         orderDetailRepo.save(request);
         return new Response<>(LocalDateTime.now().toString(), 200, null ,"Success");
-
     }
 
     @Override
