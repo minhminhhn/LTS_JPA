@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 import store.polyfood.thuctap.services.AccountService;
 
 
@@ -26,6 +27,11 @@ public class SecurityConfig {
 
     @Autowired
     private AccountService accountService;
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -49,7 +55,8 @@ public class SecurityConfig {
                         "/api/product/getfinalfrice",
                         "/api/product/getproductimage",
                         "/api/product/numberofview",
-                        "/api/product/relatedproducts")
+                        "/api/product/relatedproducts",
+                        "/api/payment/create_payment")
                 .permitAll()
                 .requestMatchers("/api/account/getaccount").hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers("/api/account/**",

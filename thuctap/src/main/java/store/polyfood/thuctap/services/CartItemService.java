@@ -44,6 +44,7 @@ public class CartItemService implements ICartItemService {
         if (carts == null) {
             Carts carts1 = new Carts();
             carts1.setUser(user);
+            carts1.setCreatedAt(LocalDateTime.now());
             cartRepo.save(carts1);
             carts = carts1;
         }
@@ -52,10 +53,13 @@ public class CartItemService implements ICartItemService {
             return  new Response<>(LocalDateTime.now().toString(),
                     404, "Product not found", null);
         }
+
         request.setCarts(carts);
         request.setProduct(product);
         request.setCreatedAt(LocalDateTime.now());
         cartItemRepo.save(request);
+        carts.setUpdatedAt(LocalDateTime.now());
+        cartRepo.save(carts);
         return new Response<>(LocalDateTime.now().toString(), 200, null ,"Success");
     }
 

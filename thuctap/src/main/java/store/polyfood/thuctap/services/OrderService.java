@@ -2,6 +2,7 @@ package store.polyfood.thuctap.services;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import store.polyfood.thuctap.models.entities.*;
 import store.polyfood.thuctap.models.responobject.Response;
 import store.polyfood.thuctap.repositories.*;
@@ -45,6 +47,13 @@ public class OrderService implements IOrderService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private  RestTemplate restTemplate;
+
+    public OrderService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     @Override
     public Response createNew(Orders request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -52,7 +61,7 @@ public class OrderService implements IOrderService {
         Account account = (Account) accountService.loadUserByUsername(username);
         User user = userRepo.findByAccountId(account.getAcountId());
 
-        OrderStatus orderStatus = orderStatusRepo.findById(1).orElse(null);
+        OrderStatus orderStatus = orderStatusRepo.findById(5).orElse(null);
         if (orderStatus == null) {
             return new Response<>(LocalDateTime.now().toString(),
                     404, "Order status not found", null);
@@ -85,8 +94,13 @@ public class OrderService implements IOrderService {
                 request.setOriginalPrice(orderDetail.getPriceTotal() + request.getOriginalPrice());
             }
         }
+        request.setActualPrice(request.getOriginalPrice());
         orderRepo.save(request);
-        return new Response<>(LocalDateTime.now().toString(), 200, null, "Success");
+//        if(request.getPaymentId() == 1) {
+//            return new Response<>(LocalDateTime.now().toString(), 200,
+//                    null, "Success", createPaymentLink(request, request.getOrderId(), request.getActualPrice()));
+//        }
+        return new Response<>(LocalDateTime.now().toString(), 200, null, "Success", request);
     }
 
     @Override
@@ -251,5 +265,17 @@ public class OrderService implements IOrderService {
         helper.setText(content, true);
 
         mailSender.send(message);
+    }
+    public Response createPaymentLink(Orders orders ,int orderId, double amount) {
+        int amountInt = (int)amount*100;
+        String paymentApiUrl = "http://localhost:8080/api/payment" + "/createPaymentLink?" +
+                "orderId="+orderId+
+                "&amount=" + amountInt;
+        ResponseEntity<Response> responseEntity = restTemplate.getForEntity(paymentApiUrl, Response.class);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            return responseEntity.getBody();
+        } else {
+            throw new RuntimeException("Failed to create payment link.");
+        }
     }
 }

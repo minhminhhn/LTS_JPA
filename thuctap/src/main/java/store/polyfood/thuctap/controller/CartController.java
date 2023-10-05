@@ -56,7 +56,7 @@ public class CartController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @RequestMapping(value = "/cart", method = RequestMethod.GET)
+    @RequestMapping(value = "/getcart", method = RequestMethod.GET)
     public ResponseEntity<Response<Carts>> getById() {
         Response<Carts> response = cartService.getCart();
         return ResponseEntity.status(response.getStatus()).body(response);
