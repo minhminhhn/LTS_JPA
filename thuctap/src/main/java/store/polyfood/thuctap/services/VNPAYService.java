@@ -1,9 +1,10 @@
-package store.polyfood.thuctap.controller;
+package store.polyfood.thuctap.services;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,20 +19,15 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@RestController
-@RequestMapping(value = "/api/payment")
-public class VNPAYController {
+@Service
+public class VNPAYService {
 
-    @GetMapping("create_payment")
-    public ResponseEntity<Response<Map<String, Object>>> createPayment(@RequestParam int orderId, @RequestParam long amount) throws UnsupportedEncodingException {
+    public Response<?> createPayment(int orderId, long amount) throws UnsupportedEncodingException {
         String orderType = "other";
         long amountL = amount * 100;
-//        String bankCode = req.getParameter("bankCode");
 
         String vnp_TxnRef = ConfigPayment.getRandomNumber(8);
         String vnp_IpAddr = "127.0.0.1";
-//        Long amountL = Long.parseLong(String.valueOf(amount)) * 100;
-//        long amountL = 1000000*100;
         String vnp_TmnCode = ConfigPayment.vnp_TmnCode;
 
         Map<String, String> vnp_Params = new HashMap<>();
@@ -44,18 +40,9 @@ public class VNPAYController {
 
         vnp_Params.put("vnp_TxnRef", "poly" + orderId);
         vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + "poly" + orderId);
-//        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-//        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
         vnp_Params.put("vnp_OrderType", orderType);
         vnp_Params.put("vnp_Locale", "vn");
 
-
-//        String locate = req.getParameter("language");
-//        if (locate != null && !locate.isEmpty()) {
-//            vnp_Params.put("vnp_Locale", locate);
-//        } else {
-//            vnp_Params.put("vnp_Locale", "vn");
-//        }
         vnp_Params.put("vnp_ReturnUrl", ConfigPayment.vnp_ReturnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
@@ -103,7 +90,7 @@ public class VNPAYController {
 //        job.addProperty("data", paymentUrl);
 //        Gson gson = new Gson();
 //        resp.getWriter().write(gson.toJson(job));
-        return ResponseEntity.status(HttpStatus.OK).body(new Response<>(LocalDateTime.now().toString(),
-                200, null, "successfully", url));
+        return new Response<>(LocalDateTime.now().toString(),
+                200, null, "successfully", url);
     }
 }

@@ -16,7 +16,7 @@ public class ConfigPayment {
     public static String vnp_Command = "pay";
 
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/vnpay_jsp/vnpay_return.jsp";
+    public static String vnp_ReturnUrl = "http://localhost:8080/api/payment/vnpay_return";
     public static String vnp_TmnCode = "KHPW4YXT";
     public static String secretKey = "HJKKGEGGZPSNFCBUBCWJLSKMOKPRJLUJ";
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
@@ -54,7 +54,6 @@ public class ConfigPayment {
         }
         return digest;
     }
-
     //Util for VNPAY
     public static String hashAllFields(Map fields) {
         List fieldNames = new ArrayList(fields.keySet());
@@ -78,7 +77,6 @@ public class ConfigPayment {
 
     public static String hmacSHA512(final String key, final String data) {
         try {
-
             if (key == null || data == null) {
                 throw new NullPointerException();
             }

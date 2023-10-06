@@ -39,7 +39,7 @@ public class OrderController {
             .create();
 
     @RequestMapping(value = "/create", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> create(@RequestBody String request) {
+    public ResponseEntity<Response> create(@RequestBody String request) throws UnsupportedEncodingException {
         Orders orders = gson.fromJson(request, Orders.class);
         Response response = orderService.createNew(orders);
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -94,6 +94,4 @@ public class OrderController {
     public ResponseEntity<Response<List<Orders>>> getOrders() {
         return ResponseEntity.status(200).body(orderService.getOrders());
     }
-
-
 }

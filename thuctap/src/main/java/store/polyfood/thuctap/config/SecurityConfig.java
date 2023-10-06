@@ -56,7 +56,8 @@ public class SecurityConfig {
                         "/api/product/getproductimage",
                         "/api/product/numberofview",
                         "/api/product/relatedproducts",
-                        "/api/payment/create_payment")
+                        "/api/payment/create_payment",
+                                "/api/payment/vnpay_return")
                 .permitAll()
                 .requestMatchers("/api/account/getaccount").hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers("/api/account/**",

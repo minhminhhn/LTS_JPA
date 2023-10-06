@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import store.polyfood.thuctap.models.entities.Payment;
 import store.polyfood.thuctap.models.responobject.Response;
+import store.polyfood.thuctap.services.OrderService;
 import store.polyfood.thuctap.services.PaymentService;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,8 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+    @Autowired
+    private OrderService orderService;
 
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>)
@@ -60,5 +63,15 @@ public class PaymentController {
     public ResponseEntity<Response<Payment>> getById(@RequestParam int id) {
         Response<Payment> response = paymentService.getById(id);
         return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @RequestMapping(value = "/vnpay_return", method = RequestMethod.GET)
+    public ResponseEntity<?> vnpayReturn(@RequestParam String vnp_ResponseCode,
+                                              @RequestParam String vnp_TxnRef
+                                              ) {
+        String id =  vnp_TxnRef.substring("poly".length());
+        int orderId = Integer.parseInt(id);
+
+        return ResponseEntity.ok(orderService.getPayment(orderId, vnp_ResponseCode));
     }
 }

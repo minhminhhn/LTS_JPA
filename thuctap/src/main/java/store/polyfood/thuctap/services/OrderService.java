@@ -40,6 +40,9 @@ public class OrderService implements IOrderService {
     private PaymentRepo paymentRepo;
 
     @Autowired
+    private VNPAYService vnpayService;
+
+    @Autowired
     private ProductRepo productRepo;
     @Autowired
     private AccountService accountService;
@@ -55,24 +58,18 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Response createNew(Orders request) {
+    public Response createNew(Orders request) throws UnsupportedEncodingException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username =  (String) authentication.getPrincipal();
         Account account = (Account) accountService.loadUserByUsername(username);
         User user = userRepo.findByAccountId(account.getAcountId());
 
-        OrderStatus orderStatus = orderStatusRepo.findById(5).orElse(null);
-        if (orderStatus == null) {
-            return new Response<>(LocalDateTime.now().toString(),
-                    404, "Order status not found", null);
-        }
         Payment payment = paymentRepo.findById(request.getPaymentId()).orElse(null);
         if (payment == null) {
             return new Response<>(LocalDateTime.now().toString(),
                     404, "Payment not found", null);
         }
         request.setUser(user);
-        request.setOrderStatus(orderStatus);
         request.setPayment(payment);
         request.setCreatedAt(LocalDateTime.now());
         orderRepo.save(request);
@@ -94,13 +91,23 @@ public class OrderService implements IOrderService {
                 request.setOriginalPrice(orderDetail.getPriceTotal() + request.getOriginalPrice());
             }
         }
+
         request.setActualPrice(request.getOriginalPrice());
-        orderRepo.save(request);
-//        if(request.getPaymentId() == 1) {
-//            return new Response<>(LocalDateTime.now().toString(), 200,
-//                    null, "Success", createPaymentLink(request, request.getOrderId(), request.getActualPrice()));
-//        }
-        return new Response<>(LocalDateTime.now().toString(), 200, null, "Success", request);
+        if(request.getPaymentId() == 1) {
+            OrderStatus orderStatus = orderStatusRepo.findById(5).orElse(null);
+            if (orderStatus == null) {
+                return new Response<>(LocalDateTime.now().toString(),
+                        404, "Order status not found", null);
+            }
+            request.setOrderStatus(orderStatus);
+            orderRepo.save(request);
+            return vnpayService.createPayment(request.getOrderId(), (long) request.getActualPrice());
+        } else {
+            OrderStatus orderStatus = orderStatusRepo.findById(5).orElse(null);
+            request.setOrderStatus(orderStatus);
+            orderRepo.save(request);
+            return new Response<>(LocalDateTime.now().toString(), 200, null, "Success", request);
+        }
     }
 
     @Override
@@ -220,6 +227,21 @@ public class OrderService implements IOrderService {
                 null, "Success", orderRepo.findAllByUserId(user.getUserId()));
     }
 
+    @Override
+    public Response<?> getPayment(int orderId, String vnp_ResponseCode) {
+        Orders orders = orderRepo.findById(orderId).orElse(null);
+        if (orders == null) {
+            return new Response<>(LocalDateTime.now().toString(), 404, "null", null);
+        }
+        if(vnp_ResponseCode.equals("00")){
+            OrderStatus orderStatus = orderStatusRepo.findById(1).orElse(null);
+            orders.setOrderStatus(orderStatus);
+            orderRepo.save(orders);
+            return new Response<>(LocalDateTime.now().toString(), 200, null, "done");
+        }
+        return new Response<>(LocalDateTime.now().toString(), 404, "null", null);
+    }
+
 
     public Response updateStatus(int orderId, int statusId) {
         try {
@@ -265,17 +287,5 @@ public class OrderService implements IOrderService {
         helper.setText(content, true);
 
         mailSender.send(message);
-    }
-    public Response createPaymentLink(Orders orders ,int orderId, double amount) {
-        int amountInt = (int)amount*100;
-        String paymentApiUrl = "http://localhost:8080/api/payment" + "/createPaymentLink?" +
-                "orderId="+orderId+
-                "&amount=" + amountInt;
-        ResponseEntity<Response> responseEntity = restTemplate.getForEntity(paymentApiUrl, Response.class);
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return responseEntity.getBody();
-        } else {
-            throw new RuntimeException("Failed to create payment link.");
-        }
     }
 }
